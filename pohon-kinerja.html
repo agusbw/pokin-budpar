@@ -1,0 +1,3270 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Pohon Kinerja — Disbudpar Buleleng 2025-2029</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      :root {
+        --bg: #eef2f7;
+        --card: #fff;
+        --border: #d8e2ee;
+        --text: #18293d;
+        --muted: #607080;
+        --radius: 9px;
+        --shadow: 0 2px 10px rgba(18, 40, 72, 0.09);
+        --shadow-h: 0 8px 28px rgba(18, 40, 72, 0.2);
+        --card-w: 182px;
+        --card-gap: 14px;
+        --vgap: 80px;
+        --vgap-sk: 52px;
+      }
+      body {
+        font-family: "Segoe UI", system-ui, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+      }
+
+      /* HEADER */
+      .site-header {
+        background: #0d1b2a;
+        color: #fff;
+        padding: 0 20px;
+        height: 54px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        position: sticky;
+        top: 0;
+        z-index: 300;
+        box-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
+      }
+      .h-icon {
+        font-size: 18px;
+        width: 32px;
+        height: 32px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .h-title {
+        font-size: 13.5px;
+        font-weight: 700;
+      }
+      .h-sub {
+        font-size: 10px;
+        color: rgba(255, 255, 255, 0.5);
+        margin-top: 1px;
+      }
+      .h-right {
+        margin-left: auto;
+        display: flex;
+        gap: 6px;
+        align-items: center;
+      }
+      .hbtn {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 6px;
+        color: #fff;
+        font-size: 10.5px;
+        font-weight: 600;
+        padding: 5px 11px;
+        cursor: pointer;
+        transition: background 0.15s;
+        white-space: nowrap;
+      }
+      .hbtn:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+      .hbtn.accent {
+        background: rgba(255, 220, 100, 0.15);
+        border-color: rgba(255, 220, 100, 0.4);
+      }
+      .hbtn.accent:hover {
+        background: rgba(255, 220, 100, 0.25);
+      }
+      .hbtn svg {
+        width: 11px;
+        height: 11px;
+        flex-shrink: 0;
+      }
+      .hbtn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      /* LEGEND */
+      .legend {
+        background: #fff;
+        border-bottom: 1px solid var(--border);
+        padding: 7px 20px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        flex-wrap: wrap;
+        font-size: 10px;
+        color: var(--muted);
+        overflow-x: auto;
+      }
+      .l-lbl {
+        font-weight: 700;
+        color: var(--text);
+        margin-right: 2px;
+        white-space: nowrap;
+      }
+      .l-item {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        white-space: nowrap;
+      }
+      .l-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 2px;
+        flex-shrink: 0;
+      }
+      .l-sep {
+        color: #ccc;
+        font-size: 12px;
+        margin: 0 3px;
+      }
+      .l-ev {
+        width: 20px;
+        border-top: 2px dashed #94afc4;
+      }
+      .l-eh {
+        width: 20px;
+        border-top: 2px solid #e09530;
+      }
+
+      /* TOAST */
+      .toast {
+        position: fixed;
+        bottom: 28px;
+        left: 50%;
+        transform: translateX(-50%) translateY(20px);
+        background: #0d1b2a;
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 24px;
+        font-size: 12px;
+        font-weight: 600;
+        opacity: 0;
+        transition:
+          opacity 0.3s,
+          transform 0.3s;
+        z-index: 9999;
+        pointer-events: none;
+        white-space: nowrap;
+      }
+      .toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+
+      /* TREE */
+      .tree-scroll {
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .tree-wrapper {
+        position: relative;
+        padding: 44px 60px 80px;
+        min-width: max-content;
+        /* extra right padding so last group isn't clipped */
+      }
+      .connector-svg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
+        overflow: visible;
+      }
+
+      /* ROWS */
+      .tree-row {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        gap: var(--card-gap);
+        position: relative;
+        z-index: 1;
+      }
+      .v-gap {
+        height: var(--vgap);
+      }
+      .v-gap-sk {
+        height: var(--vgap-sk);
+      }
+
+      /* Vertical groups row (level 7) */
+      .level7-groups {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        gap: var(--card-gap);
+        position: relative;
+        z-index: 1;
+      }
+      .ssk-group {
+        width: var(--card-w);
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        /* height auto-collapses when children are display:none */
+        transition: opacity 0.2s;
+      }
+      /* When parent sk is hidden due to sp collapse — keep width but zero height */
+      .ssk-group.grp-hidden {
+        overflow: hidden;
+        height: 0;
+        gap: 0;
+        min-height: 0;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      /* NODE CARD */
+      .node-card {
+        background: var(--card);
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius);
+        padding: 11px 12px 10px;
+        cursor: pointer;
+        width: var(--card-w);
+        flex-shrink: 0;
+        box-shadow: var(--shadow);
+        transition:
+          box-shadow 0.2s,
+          transform 0.15s,
+          opacity 0.2s,
+          outline 0.12s;
+        position: relative;
+        border-top-width: 3px;
+        outline: 2.5px solid transparent;
+        outline-offset: 2px;
+      }
+      .node-card:hover {
+        box-shadow: var(--shadow-h);
+        transform: translateY(-3px);
+      }
+      .node-card:active {
+        transform: scale(0.97);
+      }
+      /* Highlight / dim */
+      .node-card.highlighted {
+        outline-color: var(--accent, #1060a0) !important;
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.22) !important;
+        transform: translateY(-4px) !important;
+        z-index: 20;
+      }
+      .node-card.dimmed {
+        opacity: 0.14;
+        pointer-events: none;
+      }
+      .is-dimming .node-card:not(.highlighted):not(.dimmed) {
+        opacity: 0.14;
+        pointer-events: none;
+      }
+      #connectorSvg path.path-hi {
+        opacity: 1 !important;
+        stroke-width: 2.8 !important;
+      }
+      #connectorSvg path.path-dim {
+        opacity: 0.05 !important;
+      }
+
+      .n-level {
+        font-size: 8px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.9px;
+        margin-bottom: 4px;
+      }
+      .n-nama {
+        font-size: 11px;
+        font-weight: 700;
+        line-height: 1.42;
+        color: var(--text);
+        margin-bottom: 7px;
+      }
+      .n-it {
+        font-size: 7.5px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.7px;
+        color: var(--muted);
+        margin-bottom: 3px;
+      }
+      .n-il {
+        list-style: none;
+        margin-bottom: 8px;
+      }
+      .n-il li {
+        font-size: 9.5px;
+        color: #445566;
+        line-height: 1.38;
+        padding: 2px 0 2px 11px;
+        position: relative;
+        border-bottom: 1px dashed #eef2f7;
+      }
+      .n-il li:last-child {
+        border-bottom: none;
+      }
+      .n-il li::before {
+        content: "▸";
+        position: absolute;
+        left: 0;
+        font-size: 7px;
+        top: 3px;
+        color: var(--bullet, #888);
+      }
+      .btn-d {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 9px;
+        font-weight: 700;
+        padding: 4px 9px;
+        border-radius: 20px;
+        border: 1.5px solid;
+        background: transparent;
+        cursor: pointer;
+        transition: background 0.12s;
+        margin-bottom: 6px;
+      }
+      .btn-d:hover {
+        background: rgba(0, 0, 0, 0.04);
+      }
+      .btn-d svg {
+        width: 9px;
+        height: 9px;
+      }
+      .toggle-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        width: 100%;
+        padding: 3px 6px;
+        border-radius: 5px;
+        border: 1px dashed;
+        background: transparent;
+        cursor: pointer;
+        font-size: 8.5px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        transition: background 0.12s;
+      }
+      .toggle-btn:hover {
+        background: rgba(0, 0, 0, 0.05);
+      }
+      .toggle-btn .t-icon {
+        font-size: 7px;
+        transition: transform 0.2s;
+        display: inline-block;
+      }
+      .toggle-btn.collapsed .t-icon {
+        transform: rotate(-90deg);
+      }
+      .dark-card .n-nama {
+        color: #fff;
+      }
+      .dark-card .n-il li {
+        color: rgba(255, 255, 255, 0.8);
+        border-bottom-color: rgba(255, 255, 255, 0.12);
+      }
+      .dark-card .n-it {
+        color: rgba(255, 255, 255, 0.55);
+      }
+      .wide-card {
+        width: 240px;
+      }
+      /* ssk cards inside groups are identical width as card-w */
+      .ssk-group .node-card {
+        width: 100%;
+      }
+
+      /* MODAL */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(8, 18, 34, 0.65);
+        z-index: 999;
+        align-items: center;
+        justify-content: center;
+        padding: 18px;
+        backdrop-filter: blur(5px);
+      }
+      .modal-overlay.open {
+        display: flex;
+      }
+      .modal {
+        background: #fff;
+        border-radius: 13px;
+        width: 100%;
+        max-width: 600px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 28px 72px rgba(0, 0, 0, 0.3);
+        animation: popIn 0.2s cubic-bezier(0.34, 1.4, 0.64, 1);
+      }
+      @keyframes popIn {
+        from {
+          transform: scale(0.93) translateY(12px);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1) translateY(0);
+          opacity: 1;
+        }
+      }
+      .modal-hdr {
+        padding: 18px 22px 14px;
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        background: #fff;
+        z-index: 10;
+        border-radius: 13px 13px 0 0;
+      }
+      .m-badge {
+        display: inline-block;
+        font-size: 8.5px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.9px;
+        padding: 3px 9px;
+        border-radius: 20px;
+        margin-bottom: 7px;
+      }
+      .m-nama {
+        font-size: 16px;
+        font-weight: 800;
+        color: #0d1b2a;
+        line-height: 1.38;
+        padding-right: 32px;
+      }
+      .modal-close {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        width: 26px;
+        height: 26px;
+        border: none;
+        background: #f0f4f8;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--muted);
+        transition: background 0.15s;
+      }
+      .modal-close:hover {
+        background: #e2eaf2;
+      }
+      .modal-body {
+        padding: 18px 22px 24px;
+      }
+      .m-sec {
+        font-size: 8.5px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.9px;
+        color: var(--muted);
+        margin: 15px 0 8px;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .m-sec:first-child {
+        margin-top: 0;
+      }
+      .m-sec::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+      }
+      .info-row {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+      }
+      .info-cell {
+        flex: 1;
+        min-width: 120px;
+        background: #f5f8fb;
+        border: 1px solid #e4eaf2;
+        border-radius: 7px;
+        padding: 8px 11px;
+      }
+      .ic-l {
+        font-size: 9px;
+        color: var(--muted);
+        font-weight: 600;
+        margin-bottom: 2px;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+      }
+      .ic-v {
+        font-size: 12.5px;
+        font-weight: 700;
+        color: var(--text);
+      }
+      .m-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 11.5px;
+        margin-bottom: 4px;
+      }
+      .m-table th {
+        background: #f0f4f8;
+        text-align: left;
+        padding: 6px 10px;
+        font-size: 9.5px;
+        font-weight: 700;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        border-bottom: 1px solid var(--border);
+      }
+      .m-table td {
+        padding: 7px 10px;
+        border-bottom: 1px solid #edf2f8;
+        vertical-align: middle;
+        line-height: 1.42;
+      }
+      .m-table tr:last-child td {
+        border-bottom: none;
+      }
+      .m-table tr:hover td {
+        background: #f9fbfd;
+      }
+      .s-badge {
+        display: inline-block;
+        background: #eef4fb;
+        color: #2a5080;
+        font-size: 9.5px;
+        font-weight: 700;
+        padding: 2px 7px;
+        border-radius: 5px;
+        white-space: nowrap;
+      }
+      .peran-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+      }
+      .peran-block {
+        background: #f5f8fb;
+        border: 1px solid #e4eaf2;
+        border-radius: 7px;
+        padding: 9px 10px;
+      }
+      .pt {
+        font-size: 8.5px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        margin-bottom: 5px;
+      }
+      .pt.int {
+        color: #1a6e4a;
+      }
+      .pt.lin {
+        color: #1a4e8a;
+      }
+      .pt.ext {
+        color: #7a3a00;
+      }
+      .pl {
+        list-style: none;
+      }
+      .pl li {
+        font-size: 10.5px;
+        padding: 3px 0 3px 11px;
+        position: relative;
+        border-bottom: 1px solid #e8eef5;
+        line-height: 1.38;
+      }
+      .pl li:last-child {
+        border-bottom: none;
+      }
+      .pl li::before {
+        content: "·";
+        position: absolute;
+        left: 2px;
+        font-weight: 900;
+        font-size: 12px;
+        line-height: 1;
+        top: 2px;
+      }
+      .pl.empty {
+        font-size: 10px;
+        color: #aaa;
+        font-style: italic;
+      }
+
+      /* PDF Loading overlay */
+      .pdf-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(13, 27, 42, 0.8);
+        z-index: 9998;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 14px;
+        color: #fff;
+        font-size: 14px;
+        font-weight: 600;
+        backdrop-filter: blur(4px);
+      }
+      .pdf-overlay.show {
+        display: flex;
+      }
+      .pdf-spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba(255, 255, 255, 0.2);
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- PDF Loading -->
+    <div
+      class="pdf-overlay"
+      id="pdfOverlay"
+    >
+      <div class="pdf-spinner"></div>
+      <span id="pdfStatus">Mempersiapkan PDF…</span>
+    </div>
+
+    <!-- Toast -->
+    <div
+      class="toast"
+      id="toast"
+    ></div>
+
+    <header
+      class="site-header"
+      id="siteHeader"
+    >
+      <div class="h-icon">🏛️</div>
+      <div>
+        <div class="h-title">
+          Pohon Kinerja — Dinas Kebudayaan dan Pariwisata Kabupaten Buleleng
+        </div>
+        <div class="h-sub">Cascading Kinerja TA 2025–2029</div>
+      </div>
+      <div
+        class="h-right"
+        id="headerRight"
+      >
+        <button
+          class="hbtn"
+          onclick="expandAll()"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3m13 0h3a2 2 0 0 0 2-2v-3"
+            />
+          </svg>
+          Expand Sub Kegiatan
+        </button>
+        <button
+          class="hbtn"
+          onclick="collapseAll()"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M4 14h6m0 0v6m0-6l-7 7M20 10h-6m0 0V4m0 6l7-7" />
+          </svg>
+          Reset View
+        </button>
+        <button
+          class="hbtn accent"
+          onclick="exportPDF(false)"
+          id="btnPdfKegiatan"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          >
+            <path d="M6 9V3h12v6" />
+            <rect
+              x="6"
+              y="14"
+              width="12"
+              height="7"
+              rx="1"
+            />
+            <path
+              d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"
+            />
+          </svg>
+          PDF (s/d Kegiatan)
+        </button>
+        <button
+          class="hbtn accent"
+          onclick="exportPDF(true)"
+          id="btnPdfAll"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          >
+            <path d="M6 9V3h12v6" />
+            <rect
+              x="6"
+              y="14"
+              width="12"
+              height="7"
+              rx="1"
+            />
+            <path
+              d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"
+            />
+          </svg>
+          PDF (Semua Level)
+        </button>
+      </div>
+    </header>
+
+    <div
+      class="legend"
+      id="legendBar"
+    >
+      <span class="l-lbl">Level:</span>
+      <span class="l-sep">|</span>
+      <div class="l-item">
+        <div class="l-ev"></div>
+        <span>Vertikal (parent–child)</span>
+      </div>
+      <div class="l-item">
+        <div class="l-eh"></div>
+        <span>Horizontal (koordinasi)</span>
+      </div>
+    </div>
+
+    <div
+      class="tree-scroll"
+      id="treeScroll"
+    >
+      <div
+        class="tree-wrapper"
+        id="treeWrapper"
+      >
+        <svg
+          class="connector-svg"
+          id="connectorSvg"
+          xmlns="http://www.w3.org/2000/svg"
+          overflow="visible"
+        ></svg>
+      </div>
+    </div>
+
+    <div
+      class="modal-overlay"
+      id="modalOverlay"
+      onclick="closeOnOverlay(event)"
+    >
+      <div class="modal">
+        <div class="modal-hdr">
+          <div
+            id="modalBadge"
+            class="m-badge"
+          ></div>
+          <div
+            id="modalNama"
+            class="m-nama"
+          ></div>
+          <button
+            class="modal-close"
+            onclick="closeModal()"
+          >
+            ✕
+          </button>
+        </div>
+        <div
+          class="modal-body"
+          id="modalBody"
+        ></div>
+      </div>
+    </div>
+
+    <style>
+      /* bullet color via CSS var */
+      .n-il li::before {
+        color: var(--bullet, #888);
+      }
+    </style>
+
+    <script>
+      /* ════════════════════════════════
+   LEVEL CONFIG
+════════════════════════════════ */
+      const LEVELS = [
+        {
+          id: 0,
+          name: "Misi",
+          cardBorder: "#0d1b2a",
+          cardBg: "#0d1b2a",
+          darkCard: true,
+          accent: "#7eb8e8",
+          lineColor: "#7eb8e8",
+          badgeBg: "#d4e4f5",
+          badgeColor: "#0d1b2a",
+        },
+        {
+          id: 1,
+          name: "Core Business",
+          cardBorder: "#1060a0",
+          accent: "#1060a0",
+          lineColor: "#1060a0",
+          badgeBg: "#deeaf8",
+          badgeColor: "#1060a0",
+        },
+        {
+          id: 2,
+          name: "Isu Strategis",
+          cardBorder: "#c07020",
+          accent: "#c07020",
+          lineColor: "#c07020",
+          badgeBg: "#fcecd5",
+          badgeColor: "#8a4a00",
+        },
+        {
+          id: 3,
+          name: "Tujuan",
+          cardBorder: "#7c42c0",
+          accent: "#7c42c0",
+          lineColor: "#7c42c0",
+          badgeBg: "#ede5f8",
+          badgeColor: "#5a2ca0",
+        },
+        {
+          id: 4,
+          name: "Sasaran Strategis",
+          cardBorder: "#0a8e7a",
+          accent: "#0a8e7a",
+          lineColor: "#0a8e7a",
+          badgeBg: "#d5f4ee",
+          badgeColor: "#0a6e5c",
+        },
+        {
+          id: 5,
+          name: "Sasaran Program",
+          cardBorder: "#c03060",
+          accent: "#c03060",
+          lineColor: "#c03060",
+          badgeBg: "#fce5ed",
+          badgeColor: "#900030",
+        },
+        {
+          id: 6,
+          name: "Sasaran Kegiatan",
+          cardBorder: "#20904a",
+          accent: "#20904a",
+          lineColor: "#20904a",
+          badgeBg: "#d8f2e4",
+          badgeColor: "#0e6030",
+        },
+        {
+          id: 7,
+          name: "Sasaran Sub Kegiatan",
+          cardBorder: "#4a5aaa",
+          accent: "#4a5aaa",
+          lineColor: "#4a5aaa",
+          badgeBg: "#e5e8f8",
+          badgeColor: "#2a3880",
+        },
+      ];
+
+      /* Warna connector tiap Program ke bawah */
+      const PROG_COLORS = {
+        "sp-1": "#1565C0",
+        "sp-2": "#00695C",
+        "sp-3": "#BF360C",
+        "sp-4": "#4A148C",
+        "sp-5": "#880E4F",
+        "sp-6": "#1B5E20",
+        "sp-7": "#4E342E",
+        "sp-8": "#01579B",
+        "sp-9": "#D84315",
+        "sp-10": "#37474F",
+      };
+
+      /* ════════════════════════════════
+   NODES
+════════════════════════════════ */
+      const NODES = {
+        "misi-all": {
+          level: 0,
+          nama: "Misi RPJMD 2025-2029",
+          indikator: [
+            {
+              nama: "Misi 3 — Mewujudkan Transformasi Ekonomi yang Produktif, Inovatif, dan Inklusif",
+              satuan: "",
+            },
+            {
+              nama: "Misi 8 — Mewujudkan Ketahanan Sosial Budaya dan Menjamin Kesinambungan Pembangunan",
+              satuan: "",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "cb-1": {
+          level: 1,
+          nama: "Membantu Bupati Melaksanakan Urusan Pemerintahan di Bidang Kebudayaan dan Pariwisata",
+          indikator: [],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "is-all": {
+          level: 2,
+          nama: "Isu Strategis Disbudpar",
+          indikator: [
+            {
+              nama: "1. Belum Optimalnya Pelestarian Warisan Budaya",
+              satuan: "",
+            },
+            {
+              nama: "2. Belum Optimalnya Infrastruktur dan Fasilitas Pendukung Pariwisata Berkelanjutan",
+              satuan: "",
+            },
+            {
+              nama: "3. Belum Optimalnya Kontribusi Pariwisata terhadap Ekonomi Lokal",
+              satuan: "",
+            },
+            {
+              nama: "4. Belum Optimalnya Daya Saing Pariwisata Daerah",
+              satuan: "",
+            },
+            {
+              nama: "5. Kualitas Layanan Pariwisata Belum Maksimal",
+              satuan: "",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "tj-1": {
+          level: 3,
+          nama: "Meningkatnya Nilai-nilai Pelestarian Adat dan Budaya Daerah serta Meningkatnya Produktivitas Perekonomian Daerah Sektor Pariwisata",
+          indikator: [
+            { nama: "Persentase Pelestarian Adat Budaya", satuan: "%" },
+            { nama: "Persentase Pelestarian Seni Budaya", satuan: "%" },
+            {
+              nama: "Persentase Peningkatan Kunjungan Wisatawan Mancanegara",
+              satuan: "%",
+            },
+            { nama: "Rata-rata Lama Tinggal Wisatawan", satuan: "Hari" },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ss-1": {
+          level: 4,
+          nama: "Meningkatnya Nilai-nilai Pelestarian Adat dan Budaya Daerah",
+          indikator: [
+            { nama: "Persentase Pelestarian Adat Budaya", satuan: "%" },
+            { nama: "Persentase Pelestarian Seni Budaya", satuan: "%" },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ss-2": {
+          level: 4,
+          nama: "Meningkatnya Kontribusi Akomodasi Makan dan Minum dalam PDRB",
+          indikator: [
+            {
+              nama: "Persentase Kontribusi Akomodasi Makan dan Minum dalam PDRB",
+              satuan: "%",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ss-3": {
+          level: 4,
+          nama: "Meningkatnya Kunjungan Wisatawan Mancanegara",
+          indikator: [
+            {
+              nama: "Persentase Peningkatan Kunjungan Wisatawan Mancanegara",
+              satuan: "%",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ss-4": {
+          level: 4,
+          nama: "Terwujudnya Peningkatan Kualitas Pelayanan Publik",
+          indikator: [
+            { nama: "Indeks Kepuasan Masyarakat (IKM)", satuan: "Nilai" },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "sp-1": {
+          level: 5,
+          nama: "Terwujudnya Pengembangan Kebudayaan",
+          indikator: [
+            {
+              nama: "Persentase Pelestarian Adat dan Tradisi Budaya",
+              satuan: "%",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "sp-2": {
+          level: 5,
+          nama: "Meningkatnya Kualitas Pembinaan Sejarah",
+          indikator: [
+            { nama: "Persentase Pelestarian Sejarah Lokal", satuan: "%" },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "sp-3": {
+          level: 5,
+          nama: "Terwujudnya Pelestarian dan Pengelolaan Cagar Budaya",
+          indikator: [
+            { nama: "Persentase Pelestarian Cagar Budaya", satuan: "%" },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "sp-4": {
+          level: 5,
+          nama: "Terwujudnya Pengembangan Kesenian Tradisional",
+          indikator: [
+            { nama: "Persentase Pelestarian Seni Budaya", satuan: "%" },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "sp-5": {
+          level: 5,
+          nama: "Meningkatnya Kunjungan ke Museum",
+          indikator: [{ nama: "Persentase Kunjungan ke Museum", satuan: "%" }],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "sp-6": {
+          level: 5,
+          nama: "Meningkatnya Kualitas Daya Tarik Destinasi Pariwisata",
+          indikator: [
+            {
+              nama: "Persentase Destinasi Pariwisata yang Ditata",
+              satuan: "%",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "sp-7": {
+          level: 5,
+          nama: "Terwujudnya Produk Ekonomi Kreatif Berdaya Saing",
+          indikator: [
+            {
+              nama: "Persentase Produk Ekonomi Kreatif yang Memiliki HKI",
+              satuan: "%",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "sp-8": {
+          level: 5,
+          nama: "Meningkatnya Kualitas SDM Pariwisata dan Ekonomi Kreatif",
+          indikator: [
+            {
+              nama: "Persentase SDM Pariwisata dan Ekraf yang Bersertifikat",
+              satuan: "%",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "sp-9": {
+          level: 5,
+          nama: "Meningkatnya Kunjungan Wisatawan",
+          indikator: [
+            { nama: "Persentase Peningkatan Kunjungan Wisatawan", satuan: "%" },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "sp-10": {
+          level: 5,
+          nama: "Terwujudnya Capaian Kinerja Perangkat Daerah",
+          indikator: [
+            {
+              nama: "Persentase Capaian Kinerja Perangkat Daerah",
+              satuan: "%",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "sk-1": {
+          level: 6,
+          nama: "Terwujudnya Penyebarluasan Budaya Tak Benda Daerah",
+          indikator: [
+            {
+              nama: "Persentase Tradisi Budaya yang Diperkenalkan kepada Generasi Muda",
+              satuan: "%",
+            },
+            {
+              nama: "Persentase Desa Adat dan Lembaga yang Difasilitasi dan Dibina",
+              satuan: "%",
+            },
+            {
+              nama: "Persentase Subak dan Subak Abian yang Difasilitasi dan Dibina",
+              satuan: "%",
+            },
+            {
+              nama: "Persentase Kelompok Masyarakat yang Difasilitasi Pencairan Hibah Bupati",
+              satuan: "%",
+            },
+            {
+              nama: "Persentase Pelayanan Pengesahan Lembaga/Kelompok Masyarakat",
+              satuan: "%",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "sk-2": {
+          level: 6,
+          nama: "Terwujudnya Generasi Penerus yang Paham Arti Penting Cagar Budaya",
+          indikator: [
+            {
+              nama: "Persentase Peserta yang Berperan Aktif dalam Pembinaan Sejarah Lokal",
+              satuan: "%",
+            },
+            { nama: "Persentase Kunjungan Museum", satuan: "%" },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "sk-3": {
+          level: 6,
+          nama: "Terwujudnya Penyelamatan Cagar Budaya (Penetapan)",
+          indikator: [
+            { nama: "Persentase Cagar Budaya yang Didaftarkan", satuan: "%" },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "sk-4": {
+          level: 6,
+          nama: "Terwujudnya Penyelamatan Cagar Budaya (Pengelolaan)",
+          indikator: [
+            { nama: "Persentase Cagar Budaya yang Didaftarkan", satuan: "%" },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "sk-5": {
+          level: 6,
+          nama: "Terwujudnya Lembaga yang Mendapat Pembinaan Budaya Tak Benda",
+          indikator: [
+            {
+              nama: "Persentase Lembaga/Kelompok Seni yang Terbina",
+              satuan: "%",
+            },
+            {
+              nama: "Persentase Pelayanan Rekomendasi bagi Masyarakat/Lembaga Seni",
+              satuan: "%",
+            },
+            { nama: "Persentase Pergelaran Seni", satuan: "%" },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "sk-6": {
+          level: 6,
+          nama: "Terlaksananya Pelayanan dan Akses Masyarakat Terhadap Museum",
+          indikator: [
+            {
+              nama: "Jumlah Laporan Perlindungan, Pengembangan, Pemanfaatan Koleksi Secara Terpadu",
+              satuan: "Laporan",
+            },
+            {
+              nama: "Jumlah Laporan Penyediaan dan Pemeliharaan Sarana Prasarana Museum",
+              satuan: "Laporan",
+            },
+            {
+              nama: "Jumlah Laporan Peningkatan Pelayanan dan Akses Masyarakat terhadap Museum",
+              satuan: "Laporan",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "sk-7": {
+          level: 6,
+          nama: "Terlaksananya Pengelolaan Daya Tarik Wisata Kabupaten/Kota",
+          indikator: [
+            {
+              nama: "Jumlah Daya Tarik Wisata yang Dikelola dengan Baik",
+              satuan: "DTW",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "sk-8": {
+          level: 6,
+          nama: "Terlaksananya Pengelolaan Kawasan Strategis Pariwisata",
+          indikator: [
+            {
+              nama: "Jumlah Kawasan Strategis Pariwisata yang Ditata",
+              satuan: "Kawasan",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "sk-9": {
+          level: 6,
+          nama: "Terlaksananya Pengelolaan Destinasi Pariwisata Kabupaten/Kota",
+          indikator: [
+            {
+              nama: "Jumlah Destinasi Wisata yang Ditata",
+              satuan: "Destinasi",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "sk-10": {
+          level: 6,
+          nama: "Terlaksananya Penetapan Tanda Daftar Usaha Pariwisata",
+          indikator: [
+            {
+              nama: "Jumlah Usaha Pariwisata yang Memenuhi Standar Usaha",
+              satuan: "Usaha",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "sk-11": {
+          level: 6,
+          nama: "Terwujudnya Sarana Prasarana Zona Kreatif bagi Insan Kreatif",
+          indikator: [
+            {
+              nama: "Jumlah Sarana Prasarana Zona Kreatif yang Tersedia",
+              satuan: "Unit",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "sk-12": {
+          level: 6,
+          nama: "Terwujudnya Ekosistem Ekonomi Kreatif Sesuai Standar Kriteria HAKI",
+          indikator: [
+            {
+              nama: "Jumlah Ekosistem Ekonomi Kreatif yang Dibina Sesuai Kriteria HAKI",
+              satuan: "Ekosistem",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "sk-13": {
+          level: 6,
+          nama: "Meningkatnya Kapasitas SDM Pariwisata dan Ekraf Tingkat Dasar",
+          indikator: [
+            {
+              nama: "Jumlah SDM Pariwisata dan Ekraf yang Mengikuti Peningkatan Kapasitas Tingkat Dasar",
+              satuan: "Orang",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "sk-14": {
+          level: 6,
+          nama: "Terlaksananya Pengembangan Kapasitas Pelaku Ekonomi Kreatif",
+          indikator: [
+            {
+              nama: "Jumlah Pelaku Ekraf yang Mengikuti Pengembangan Kapasitas",
+              satuan: "Orang",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "sk-15": {
+          level: 6,
+          nama: "Terlaksananya Event Promosi Pariwisata",
+          indikator: [
+            { nama: "Jumlah Event Promosi Pariwisata", satuan: "Event" },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "sk-16": {
+          level: 6,
+          nama: "Meningkatnya Nilai Akuntabilitas Kinerja SKPD pada Kategori Baik",
+          indikator: [
+            { nama: "Nilai Evaluasi Akuntabilitas Kinerja", satuan: "Nilai" },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "sk-17": {
+          level: 6,
+          nama: "Tersusunnya Administrasi Keuangan Sesuai Ketentuan",
+          indikator: [
+            {
+              nama: "Jumlah Administrasi Keuangan yang Disusun Sesuai Ketentuan",
+              satuan: "Dokumen",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "sk-18": {
+          level: 6,
+          nama: "Tersedianya Administrasi Pendapatan Daerah Sektor Pariwisata",
+          indikator: [
+            {
+              nama: "Jumlah Administrasi Pendapatan Daerah Sektor Pariwisata",
+              satuan: "Dokumen",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "sk-19": {
+          level: 6,
+          nama: "Terlaksananya Administrasi Barang Milik Daerah Sesuai Ketentuan",
+          indikator: [
+            {
+              nama: "Persentase Administrasi Barang Milik Daerah yang Sesuai Ketentuan",
+              satuan: "%",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "sk-20": {
+          level: 6,
+          nama: "Terlaksananya Administrasi Umum Perangkat Daerah",
+          indikator: [
+            {
+              nama: "Jumlah Administrasi Umum yang Dilaksanakan dengan Baik",
+              satuan: "Kegiatan",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "sk-21": {
+          level: 6,
+          nama: "Terlaksananya Pengadaan Barang Milik Daerah Penunjang Urusan Pemda",
+          indikator: [
+            {
+              nama: "Jumlah Barang Milik Daerah yang Diadakan Sesuai Kebutuhan",
+              satuan: "Unit",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "sk-22": {
+          level: 6,
+          nama: "Tersedianya Jasa Penunjang Urusan Pemerintahan Daerah",
+          indikator: [
+            {
+              nama: "Jumlah Penunjang Perkantoran yang Memadai",
+              satuan: "Laporan",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "sk-23": {
+          level: 6,
+          nama: "Terlaksananya Pemeliharaan Barang Milik Daerah Penunjang Urusan Pemda",
+          indikator: [
+            {
+              nama: "Jumlah Pemeliharaan Barang Milik Daerah yang Layak",
+              satuan: "Unit",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-1": {
+          level: 7,
+          nama: "Terlaksananya Pelindungan, Pengembangan, Pemanfaatan Objek Pemajuan Lembaga Adat",
+          indikator: [
+            {
+              nama: "Jumlah Objek Pemajuan Lembaga Adat yang Dilakukan Pelindungan, Pengembangan dan Pemanfaatan",
+              satuan: "Objek",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-2": {
+          level: 7,
+          nama: "Tersedianya Pembinaan SDM, Lembaga, dan Pranata Adat",
+          indikator: [
+            {
+              nama: "Jumlah SDM, Lembaga, dan Pranata Adat yang Dibina",
+              satuan: "Orang/Lembaga",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-3": {
+          level: 7,
+          nama: "Terlaksananya Penyediaan Sarana Prasarana Pembinaan Lembaga Adat",
+          indikator: [
+            {
+              nama: "Jumlah Sarana Prasarana Lembaga Adat yang Disediakan/Difasilitasi",
+              satuan: "Unit",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-4": {
+          level: 7,
+          nama: "Terlaksananya Pemberdayaan SDM dan Lembaga Sejarah Lokal",
+          indikator: [
+            {
+              nama: "Jumlah SDM dan Lembaga Sejarah Lokal yang Diberdayakan",
+              satuan: "Orang/Lembaga",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-5": {
+          level: 7,
+          nama: "Tersedianya Akses Masyarakat Terhadap Data dan Informasi Sejarah",
+          indikator: [
+            {
+              nama: "Jumlah Dokumen Data dan Informasi Sejarah yang Dapat Diakses Masyarakat",
+              satuan: "Dokumen",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-6": {
+          level: 7,
+          nama: "Terlaksananya Pendaftaran Objek Diduga Cagar Budaya",
+          indikator: [
+            {
+              nama: "Jumlah Objek Diduga Cagar Budaya yang Didaftarkan",
+              satuan: "Objek",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-7": {
+          level: 7,
+          nama: "Terlaksananya Penetapan Cagar Budaya",
+          indikator: [
+            {
+              nama: "Jumlah Objek Cagar Budaya yang Ditetapkan",
+              satuan: "Objek",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-8": {
+          level: 7,
+          nama: "Terlaksananya Pemanfaatan Cagar Budaya",
+          indikator: [
+            {
+              nama: "Jumlah Objek Cagar Budaya yang Dimanfaatkan",
+              satuan: "Objek",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-9": {
+          level: 7,
+          nama: "Terlaksananya Peningkatan Pendidikan dan Pelatihan SDM Kesenian Tradisional",
+          indikator: [
+            {
+              nama: "Jumlah SDM Kesenian Tradisional yang Mendapat Pendidikan dan Pelatihan",
+              satuan: "Orang",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-10": {
+          level: 7,
+          nama: "Terlaksananya Standardisasi dan Sertifikasi SDM Kesenian Tradisional",
+          indikator: [
+            {
+              nama: "Jumlah SDM Kesenian Tradisional yang Mengikuti Proses Standarisasi",
+              satuan: "Orang",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-11": {
+          level: 7,
+          nama: "Terlaksananya Peningkatan Kapasitas Tata Kelola Lembaga Kesenian Tradisional",
+          indikator: [
+            {
+              nama: "Jumlah Lembaga Kesenian Tradisional yang Ditingkatkan Kapasitasnya",
+              satuan: "Lembaga",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-12": {
+          level: 7,
+          nama: "Terlaksananya Pelindungan, Pengembangan, dan Pemanfaatan Koleksi Secara Terpadu",
+          indikator: [
+            {
+              nama: "Jumlah Koleksi Museum yang Dilakukan Pelindungan, Pengembangan, dan Pemanfaatan",
+              satuan: "Koleksi",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-13": {
+          level: 7,
+          nama: "Terlaksananya Penyediaan dan Pemeliharaan Sarana Prasarana Museum",
+          indikator: [
+            {
+              nama: "Jumlah Sarana Prasarana Museum yang Tersedia dan Terpelihara",
+              satuan: "Unit",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-14": {
+          level: 7,
+          nama: "Terlaksananya Peningkatan Pelayanan dan Akses Masyarakat Terhadap Museum",
+          indikator: [
+            {
+              nama: "Jumlah Pelayanan dan Akses Masyarakat Terhadap Museum",
+              satuan: "Layanan",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-15": {
+          level: 7,
+          nama: "Terlaksananya Pengadaan/Pemeliharaan/Rehabilitasi Sarana dalam DTW Unggulan",
+          indikator: [
+            {
+              nama: "Jumlah Lokasi DTW Unggulan Sesuai Tahapan Pengembangan",
+              satuan: "Lokasi",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-16": {
+          level: 7,
+          nama: "Terlaksananya Penetapan Daya Tarik Wisata Unggulan Kabupaten/Kota",
+          indikator: [
+            {
+              nama: "Jumlah Lokasi Daya Tarik Wisata Unggulan Kabupaten/Kota",
+              satuan: "Lokasi",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-17": {
+          level: 7,
+          nama: "Terlaksananya Monitoring dan Evaluasi Pengelolaan DTW Kabupaten/Kota",
+          indikator: [
+            {
+              nama: "Jumlah Laporan Hasil Monev Pengelolaan DTW",
+              satuan: "Laporan",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-18": {
+          level: 7,
+          nama: "Terlaksananya Perencanaan dan Perancangan DTW Unggulan Kabupaten/Kota",
+          indikator: [
+            {
+              nama: "Jumlah Dokumen Perancangan dan Perencanaan Pengembangan DTW Unggulan",
+              satuan: "Dokumen",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-19": {
+          level: 7,
+          nama: "Terlaksananya Peningkatan Kapasitas SDM Pengelola DTW Unggulan",
+          indikator: [
+            {
+              nama: "Jumlah Orang Pengelola DTW Unggulan yang Dikembangkan",
+              satuan: "Orang",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-20": {
+          level: 7,
+          nama: "Terlaksananya Peningkatan Kapasitas SDM Pengelola Kawasan Strategis Pariwisata",
+          indikator: [
+            {
+              nama: "Jumlah Orang Pengelola Pariwisata Strategis yang Dikembangkan",
+              satuan: "Orang",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-21": {
+          level: 7,
+          nama: "Terlaksananya Penetapan Destinasi Pariwisata Kabupaten/Kota",
+          indikator: [
+            {
+              nama: "Jumlah Destinasi Pariwisata Kabupaten/Kota yang Ditetapkan",
+              satuan: "Destinasi",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-22": {
+          level: 7,
+          nama: "Terlaksananya Perencanaan Destinasi Pariwisata Kabupaten/Kota",
+          indikator: [
+            {
+              nama: "Jumlah Dokumen Perencanaan Destinasi Pariwisata Kabupaten/Kota",
+              satuan: "Dokumen",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-23": {
+          level: 7,
+          nama: "Terlaksananya Pengadaan/Pemeliharaan/Rehabilitasi Sarana Pengelolaan Destinasi",
+          indikator: [
+            {
+              nama: "Jumlah Sarana Prasarana Pengelolaan Destinasi yang Tersedia dan Terpelihara",
+              satuan: "Unit",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-24": {
+          level: 7,
+          nama: "Terlaksananya Pemberdayaan Masyarakat dalam Pengelolaan Destinasi Pariwisata",
+          indikator: [
+            {
+              nama: "Jumlah Laporan Hasil Pemberdayaan Masyarakat dalam Pengelolaan Destinasi",
+              satuan: "Laporan",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-25": {
+          level: 7,
+          nama: "Terlaksananya Pengawasan Perizinan Berusaha Berbasis Risiko",
+          indikator: [
+            {
+              nama: "Jumlah Usaha Pariwisata yang Telah Dilaksanakan Pembinaan dan Pengawasan",
+              satuan: "Usaha",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-26": {
+          level: 7,
+          nama: "Terlaksananya Fasilitasi dan Pembinaan Pelaku Usaha Bidang Pariwisata",
+          indikator: [
+            {
+              nama: "Jumlah Pelaku Usaha yang Mendapatkan Advokasi dan Pendampingan Standardisasi",
+              satuan: "Usaha",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-27": {
+          level: 7,
+          nama: "Terlaksananya Pengembangan dan Revitalisasi Prasarana Kota Kreatif",
+          indikator: [
+            {
+              nama: "Jumlah Sarana Prasarana Kota Kreatif yang Tersedia",
+              satuan: "Unit",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-28": {
+          level: 7,
+          nama: "Tersedianya Infrastruktur Ekonomi Kreatif",
+          indikator: [
+            {
+              nama: "Jumlah Infrastruktur Ekonomi Kreatif yang Tersedia",
+              satuan: "Unit",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-29": {
+          level: 7,
+          nama: "Terlaksananya Pengembangan Pendidikan Ekonomi Kreatif",
+          indikator: [
+            {
+              nama: "Jumlah Dokumen Pendidikan Ekonomi Kreatif yang Dikembangkan",
+              satuan: "Dokumen",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-30": {
+          level: 7,
+          nama: "Terlaksananya Fasilitasi Proses Kreasi, Produksi, Distribusi, Konsumsi dan Konservasi Ekraf",
+          indikator: [
+            {
+              nama: "Jumlah Laporan Hasil Fasilitasi Proses Kreasi, Produksi, Distribusi, Konsumsi, dan Konservasi Ekraf",
+              satuan: "Laporan",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-31": {
+          level: 7,
+          nama: "Terlaksananya Pelatihan, Bimbingan Teknis, dan Pendampingan Ekonomi Kreatif",
+          indikator: [
+            {
+              nama: "Jumlah Orang yang Mengikuti Pelatihan, Bimtek, dan Pendampingan Ekraf",
+              satuan: "Orang",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-32": {
+          level: 7,
+          nama: "Tersusunnya Rencana Aksi Pengembangan Ekonomi Kreatif",
+          indikator: [
+            {
+              nama: "Jumlah Dokumen Rencana Aksi Pengembangan Ekraf",
+              satuan: "Dokumen",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-33": {
+          level: 7,
+          nama: "Terlaksananya Pengembangan Sistem Pemasaran Ekonomi Kreatif",
+          indikator: [
+            {
+              nama: "Jumlah Dokumen Hasil Pengembangan Sistem Pemasaran Ekraf",
+              satuan: "Dokumen",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-34": {
+          level: 7,
+          nama: "Terlaksananya Penguatan Kelembagaan Ekonomi Kreatif Daerah",
+          indikator: [
+            {
+              nama: "Jumlah Lembaga/Asosiasi yang Mendapatkan Penguatan Kelembagaan Ekraf",
+              satuan: "Lembaga",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-35": {
+          level: 7,
+          nama: "Terlaksananya Monev Pengembangan Ekosistem Ekonomi Kreatif",
+          indikator: [
+            {
+              nama: "Jumlah Laporan Hasil Monev Pengembangan Ekosistem Ekraf",
+              satuan: "Laporan",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-36": {
+          level: 7,
+          nama: "Tersusunnya Dokumen Strategis Bidang Ekonomi Kreatif Daerah",
+          indikator: [
+            {
+              nama: "Jumlah Dokumen Strategis Bidang Ekraf Daerah",
+              satuan: "Dokumen",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-37": {
+          level: 7,
+          nama: "Terlaksananya Fasilitasi Penguatan Kekayaan Intelektual",
+          indikator: [
+            {
+              nama: "Jumlah Kegiatan/Orang yang Mendapat Fasilitasi Penguatan HKI",
+              satuan: "Kegiatan/Orang",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-38": {
+          level: 7,
+          nama: "Terlaksananya Fasilitasi Sertifikasi Kompetensi Tenaga Kerja Bidang Pariwisata",
+          indikator: [
+            {
+              nama: "Jumlah Orang yang Mengikuti Fasilitasi Sertifikasi Kompetensi Tenaga Kerja Bidang Pariwisata",
+              satuan: "Orang",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-39": {
+          level: 7,
+          nama: "Terlaksananya Pengembangan Kapasitas SDM Pariwisata Berbasis SKKNI",
+          indikator: [
+            {
+              nama: "Jumlah SDM Pariwisata yang Dikembangkan Kapasitasnya Berdasarkan SKKNI",
+              satuan: "Orang",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-40": {
+          level: 7,
+          nama: "Terlaksananya Pemberdayaan dan Pembinaan Masyarakat untuk Pengembangan Pariwisata",
+          indikator: [
+            {
+              nama: "Jumlah Masyarakat yang Memperoleh Pemberdayaan dan Pembinaan untuk Pengembangan Pariwisata",
+              satuan: "Orang",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-41": {
+          level: 7,
+          nama: "Terlaksananya Fasilitasi Pengembangan Kompetensi SDM Ekonomi Kreatif",
+          indikator: [
+            {
+              nama: "Jumlah SDM Ekraf yang Mengikuti Fasilitasi Pengembangan Kompetensi",
+              satuan: "Orang",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-42": {
+          level: 7,
+          nama: "Terlaksananya Monev Pengembangan SDM Pariwisata dan Ekraf",
+          indikator: [
+            {
+              nama: "Jumlah Laporan Hasil Monev Pengembangan SDM Pariwisata dan Ekraf",
+              satuan: "Laporan",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-43": {
+          level: 7,
+          nama: "Tersedianya Data dan Penyebaran Informasi Pariwisata Kabupaten/Kota",
+          indikator: [
+            {
+              nama: "Jumlah Dokumen Hasil Penyediaan Data dan Penyebaran Informasi Pariwisata",
+              satuan: "Dokumen",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-44": {
+          level: 7,
+          nama: "Meningkatnya Kerja Sama dan Kemitraan Pariwisata Dalam dan Luar Negeri",
+          indikator: [
+            {
+              nama: "Jumlah Dokumen Kerja Sama dan Kemitraan Pariwisata",
+              satuan: "Dokumen",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-45": {
+          level: 7,
+          nama: "Terlaksananya Fasilitasi Kegiatan Pemasaran Pariwisata Dalam dan Luar Negeri",
+          indikator: [
+            {
+              nama: "Jumlah Kegiatan Pemasaran Pariwisata Dalam dan Luar Negeri",
+              satuan: "Kegiatan",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-46": {
+          level: 7,
+          nama: "Terlaksananya Penguatan Promosi Melalui Media Cetak, Elektronik, dan Media Lainnya",
+          indikator: [
+            {
+              nama: "Jumlah Dokumen Hasil Penguatan Promosi Melalui Media Cetak, Elektronik, dan Media Lainnya",
+              satuan: "Dokumen",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-47": {
+          level: 7,
+          nama: "Tersusunnya Dokumen Perencanaan Perangkat Daerah",
+          indikator: [
+            {
+              nama: "Jumlah Dokumen Perencanaan Perangkat Daerah",
+              satuan: "Dokumen",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-48": {
+          level: 7,
+          nama: "Terlaksananya Koordinasi dan Penyusunan Dokumen RKA-SKPD",
+          indikator: [
+            { nama: "Jumlah Dokumen RKA-SKPD yang Disusun", satuan: "Dokumen" },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-49": {
+          level: 7,
+          nama: "Terlaksananya Koordinasi dan Penyusunan Dokumen Perubahan RKA-SKPD",
+          indikator: [
+            {
+              nama: "Jumlah Dokumen Perubahan RKA-SKPD yang Disusun",
+              satuan: "Dokumen",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-50": {
+          level: 7,
+          nama: "Terlaksananya Koordinasi dan Penyusunan DPA-SKPD",
+          indikator: [
+            { nama: "Jumlah Dokumen DPA-SKPD yang Disusun", satuan: "Dokumen" },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-51": {
+          level: 7,
+          nama: "Terlaksananya Koordinasi dan Penyusunan Perubahan DPA-SKPD",
+          indikator: [
+            {
+              nama: "Jumlah Dokumen Perubahan DPA-SKPD yang Disusun",
+              satuan: "Dokumen",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-52": {
+          level: 7,
+          nama: "Terlaksananya Koordinasi dan Penyusunan Laporan Capaian Kinerja SKPD",
+          indikator: [
+            {
+              nama: "Jumlah Laporan Capaian Kinerja dan Ikhtisar Realisasi Kinerja yang Disusun",
+              satuan: "Laporan",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-53": {
+          level: 7,
+          nama: "Terlaksananya Evaluasi Kinerja Perangkat Daerah",
+          indikator: [
+            {
+              nama: "Jumlah Dokumen Evaluasi Kinerja yang Disusun",
+              satuan: "Dokumen",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-54": {
+          level: 7,
+          nama: "Tersedianya Data Statistik Sektoral Daerah",
+          indikator: [
+            {
+              nama: "Jumlah Data Statistik Sektoral Daerah yang Dikumpulkan dan Diperiksa",
+              satuan: "Data",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-55": {
+          level: 7,
+          nama: "Tersedianya Gaji dan Tunjangan ASN",
+          indikator: [
+            {
+              nama: "Jumlah Orang yang Menerima Gaji dan Tunjangan ASN",
+              satuan: "Orang",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-56": {
+          level: 7,
+          nama: "Terlaksananya Penatausahaan dan Pengujian/Verifikasi Keuangan SKPD",
+          indikator: [
+            {
+              nama: "Jumlah Dokumen Penatausahaan dan Pengujian/Verifikasi Keuangan SKPD",
+              satuan: "Dokumen",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-57": {
+          level: 7,
+          nama: "Terlaksananya Koordinasi dan Pelaksanaan Akuntansi SKPD",
+          indikator: [
+            {
+              nama: "Jumlah Dokumen Koordinasi dan Pelaksanaan Akuntansi SKPD",
+              satuan: "Dokumen",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-58": {
+          level: 7,
+          nama: "Terlaksananya Koordinasi dan Penyusunan Laporan Keuangan Akhir Tahun SKPD",
+          indikator: [
+            {
+              nama: "Jumlah Laporan Keuangan Akhir Tahun SKPD",
+              satuan: "Laporan",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-59": {
+          level: 7,
+          nama: "Terlaksananya Perencanaan Pengelolaan Retribusi Daerah",
+          indikator: [
+            {
+              nama: "Jumlah Dokumen Rencana Pengelolaan Retribusi Daerah",
+              satuan: "Dokumen",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-60": {
+          level: 7,
+          nama: "Tersusunnya Perencanaan Kebutuhan Barang Milik Daerah SKPD",
+          indikator: [
+            {
+              nama: "Tersedianya Rencana Kebutuhan Barang Milik Daerah SKPD",
+              satuan: "Dokumen",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-61": {
+          level: 7,
+          nama: "Tersedianya Komponen Instalasi Listrik/Penerangan Bangunan Kantor",
+          indikator: [
+            {
+              nama: "Jumlah Paket Komponen Instalasi Listrik/Penerangan yang Disediakan",
+              satuan: "Paket",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-62": {
+          level: 7,
+          nama: "Tersedianya Peralatan dan Perlengkapan Kantor",
+          indikator: [
+            {
+              nama: "Jumlah Paket Peralatan dan Perlengkapan Kantor yang Disediakan",
+              satuan: "Paket",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-63": {
+          level: 7,
+          nama: "Tersedianya Peralatan Rumah Tangga",
+          indikator: [
+            {
+              nama: "Jumlah Paket Peralatan Rumah Tangga yang Disediakan",
+              satuan: "Paket",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-64": {
+          level: 7,
+          nama: "Tersedianya Bahan Logistik Kantor",
+          indikator: [
+            {
+              nama: "Jumlah Paket Bahan Logistik Kantor yang Disediakan",
+              satuan: "Paket",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-65": {
+          level: 7,
+          nama: "Tersedianya Barang Cetakan dan Penggandaan",
+          indikator: [
+            {
+              nama: "Jumlah Paket Barang Cetakan dan Penggandaan yang Disediakan",
+              satuan: "Paket",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-66": {
+          level: 7,
+          nama: "Terlaksananya Fasilitasi Kunjungan Tamu",
+          indikator: [
+            {
+              nama: "Jumlah Laporan Fasilitasi Kunjungan Tamu",
+              satuan: "Laporan",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-67": {
+          level: 7,
+          nama: "Terlaksananya Penyelenggaraan Rapat Koordinasi dan Konsultasi SKPD",
+          indikator: [
+            {
+              nama: "Jumlah Laporan Penyelenggaraan Rapat Koordinasi dan Konsultasi SKPD",
+              satuan: "Laporan",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-68": {
+          level: 7,
+          nama: "Terlaksananya Pengadaan Kendaraan Dinas Operasional atau Lapangan",
+          indikator: [
+            {
+              nama: "Jumlah Unit Kendaraan Dinas Operasional atau Lapangan yang Disediakan",
+              satuan: "Unit",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-69": {
+          level: 7,
+          nama: "Tersedianya Jasa Surat Menyurat",
+          indikator: [
+            {
+              nama: "Jumlah Laporan Penyediaan Jasa Surat Menyurat",
+              satuan: "Laporan",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-70": {
+          level: 7,
+          nama: "Tersedianya Jasa Komunikasi, Sumber Daya Air dan Listrik",
+          indikator: [
+            {
+              nama: "Jumlah Laporan Penyediaan Jasa Komunikasi, Air dan Listrik",
+              satuan: "Laporan",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-71": {
+          level: 7,
+          nama: "Tersedianya Jasa Peralatan dan Perlengkapan Kantor",
+          indikator: [
+            {
+              nama: "Jumlah Laporan Penyediaan Jasa Peralatan dan Perlengkapan Kantor",
+              satuan: "Laporan",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-72": {
+          level: 7,
+          nama: "Tersedianya Jasa Pelayanan Umum Kantor",
+          indikator: [
+            {
+              nama: "Jumlah Laporan Penyediaan Jasa Pelayanan Umum Kantor",
+              satuan: "Laporan",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-73": {
+          level: 7,
+          nama: "Tersedianya Jasa Pemeliharaan, Biaya Pemeliharaan, Pajak dan Perizinan Kendaraan Dinas",
+          indikator: [
+            {
+              nama: "Jumlah Kendaraan Dinas yang Dipelihara dan Dibayarkan Pajak serta Perizinannya",
+              satuan: "Unit",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-74": {
+          level: 7,
+          nama: "Terlaksananya Pemeliharaan/Rehabilitasi Gedung Kantor dan Bangunan Lainnya",
+          indikator: [
+            {
+              nama: "Jumlah Gedung Kantor dan Bangunan Lainnya yang Dipelihara/Direhabilitasi",
+              satuan: "Unit",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+        "ssk-75": {
+          level: 7,
+          nama: "Terlaksananya Pemeliharaan/Rehabilitasi Sarana dan Prasarana Gedung Kantor",
+          indikator: [
+            {
+              nama: "Jumlah Sarana Prasarana Gedung Kantor yang Dipelihara/Direhabilitasi",
+              satuan: "Unit",
+            },
+          ],
+          periode: "2025-2029",
+          pelaksana: "",
+          keterangan: "",
+          berbagi_peran: { internal: [], lintas_sektor: [], eksternal: [] },
+        },
+      };
+
+      /* ════════════════════════════════
+   LAYOUT (level 0-6 only; level 7 rendered as vertical groups)
+════════════════════════════════ */
+      const LAYOUT = [
+        { level: 0, nodes: ["misi-all"] },
+        { level: 1, nodes: ["cb-1"] },
+        { level: 2, nodes: ["is-all"] },
+        { level: 3, nodes: ["tj-1"] },
+        { level: 4, nodes: ["ss-1", "ss-2", "ss-3", "ss-4"] },
+        {
+          level: 5,
+          nodes: [
+            "sp-1",
+            "sp-2",
+            "sp-3",
+            "sp-4",
+            "sp-5",
+            "sp-6",
+            "sp-7",
+            "sp-8",
+            "sp-9",
+            "sp-10",
+          ],
+        },
+        {
+          level: 6,
+          nodes: [
+            "sk-1",
+            "sk-2",
+            "sk-3",
+            "sk-4",
+            "sk-5",
+            "sk-6",
+            "sk-7",
+            "sk-8",
+            "sk-9",
+            "sk-10",
+            "sk-11",
+            "sk-12",
+            "sk-13",
+            "sk-14",
+            "sk-15",
+            "sk-16",
+            "sk-17",
+            "sk-18",
+            "sk-19",
+            "sk-20",
+            "sk-21",
+            "sk-22",
+            "sk-23",
+          ],
+        },
+      ];
+
+      /* Parent → children of sk nodes */
+      const SK_CHILDREN = {
+        "sk-1": ["ssk-1", "ssk-2", "ssk-3"],
+        "sk-2": ["ssk-4", "ssk-5"],
+        "sk-3": ["ssk-6", "ssk-7"],
+        "sk-4": ["ssk-8"],
+        "sk-5": ["ssk-9", "ssk-10", "ssk-11"],
+        "sk-6": ["ssk-12", "ssk-13", "ssk-14"],
+        "sk-7": ["ssk-15", "ssk-16", "ssk-17", "ssk-18", "ssk-19"],
+        "sk-8": ["ssk-20"],
+        "sk-9": ["ssk-21", "ssk-22", "ssk-23", "ssk-24"],
+        "sk-10": ["ssk-25", "ssk-26"],
+        "sk-11": ["ssk-27", "ssk-28"],
+        "sk-12": [
+          "ssk-29",
+          "ssk-30",
+          "ssk-31",
+          "ssk-32",
+          "ssk-33",
+          "ssk-34",
+          "ssk-35",
+          "ssk-36",
+          "ssk-37",
+        ],
+        "sk-13": ["ssk-38", "ssk-39", "ssk-40"],
+        "sk-14": ["ssk-41", "ssk-42"],
+        "sk-15": ["ssk-43", "ssk-44", "ssk-45", "ssk-46"],
+        "sk-16": [
+          "ssk-47",
+          "ssk-48",
+          "ssk-49",
+          "ssk-50",
+          "ssk-51",
+          "ssk-52",
+          "ssk-53",
+          "ssk-54",
+        ],
+        "sk-17": ["ssk-55", "ssk-56", "ssk-57", "ssk-58"],
+        "sk-18": ["ssk-59"],
+        "sk-19": ["ssk-60"],
+        "sk-20": [
+          "ssk-61",
+          "ssk-62",
+          "ssk-63",
+          "ssk-64",
+          "ssk-65",
+          "ssk-66",
+          "ssk-67",
+        ],
+        "sk-21": ["ssk-68"],
+        "sk-22": ["ssk-69", "ssk-70", "ssk-71", "ssk-72"],
+        "sk-23": ["ssk-73", "ssk-74", "ssk-75"],
+      };
+
+      /* ════════════════════════════════
+   EDGES (vertical + horizontal)
+════════════════════════════════ */
+      const EDGES = [
+        { from: "misi-all", to: "cb-1", type: "vertical" },
+        { from: "cb-1", to: "is-all", type: "vertical" },
+        { from: "is-all", to: "tj-1", type: "vertical" },
+        { from: "tj-1", to: "ss-1", type: "vertical" },
+        { from: "tj-1", to: "ss-2", type: "vertical" },
+        { from: "tj-1", to: "ss-3", type: "vertical" },
+        { from: "tj-1", to: "ss-4", type: "vertical" },
+        { from: "ss-1", to: "sp-1", type: "vertical" },
+        { from: "ss-1", to: "sp-2", type: "vertical" },
+        { from: "ss-1", to: "sp-3", type: "vertical" },
+        { from: "ss-1", to: "sp-4", type: "vertical" },
+        { from: "ss-1", to: "sp-5", type: "vertical" },
+        { from: "ss-2", to: "sp-6", type: "vertical" },
+        { from: "ss-2", to: "sp-7", type: "vertical" },
+        { from: "ss-2", to: "sp-8", type: "vertical" },
+        { from: "ss-3", to: "sp-6", type: "vertical" },
+        { from: "ss-3", to: "sp-9", type: "vertical" },
+        { from: "ss-4", to: "sp-10", type: "vertical" },
+        { from: "sp-1", to: "sk-1", type: "vertical" },
+        { from: "sp-2", to: "sk-2", type: "vertical" },
+        { from: "sp-3", to: "sk-3", type: "vertical" },
+        { from: "sp-3", to: "sk-4", type: "vertical" },
+        { from: "sp-4", to: "sk-5", type: "vertical" },
+        { from: "sp-5", to: "sk-6", type: "vertical" },
+        { from: "sp-6", to: "sk-7", type: "vertical" },
+        { from: "sp-6", to: "sk-8", type: "vertical" },
+        { from: "sp-6", to: "sk-9", type: "vertical" },
+        { from: "sp-6", to: "sk-10", type: "vertical" },
+        { from: "sp-7", to: "sk-11", type: "vertical" },
+        { from: "sp-7", to: "sk-12", type: "vertical" },
+        { from: "sp-8", to: "sk-13", type: "vertical" },
+        { from: "sp-8", to: "sk-14", type: "vertical" },
+        { from: "sp-9", to: "sk-15", type: "vertical" },
+        { from: "sp-10", to: "sk-16", type: "vertical" },
+        { from: "sp-10", to: "sk-17", type: "vertical" },
+        { from: "sp-10", to: "sk-18", type: "vertical" },
+        { from: "sp-10", to: "sk-19", type: "vertical" },
+        { from: "sp-10", to: "sk-20", type: "vertical" },
+        { from: "sp-10", to: "sk-21", type: "vertical" },
+        { from: "sp-10", to: "sk-22", type: "vertical" },
+        { from: "sp-10", to: "sk-23", type: "vertical" },
+        // sk → ssk (vertical — drawn via SK_CHILDREN mapping)
+        ...Object.entries(SK_CHILDREN).flatMap(([sk, ssks]) =>
+          ssks.map((ssk) => ({ from: sk, to: ssk, type: "vertical" })),
+        ),
+        // Horizontal koordinasi
+        { from: "ss-1", to: "ss-2", type: "horizontal" },
+        { from: "ss-2", to: "ss-3", type: "horizontal" },
+        { from: "sp-1", to: "sp-2", type: "horizontal" },
+        { from: "sp-6", to: "sp-7", type: "horizontal" },
+        { from: "sp-8", to: "sp-9", type: "horizontal" },
+        { from: "sk-7", to: "sk-8", type: "horizontal" },
+        { from: "sk-11", to: "sk-12", type: "horizontal" },
+        { from: "sk-13", to: "sk-14", type: "horizontal" },
+      ];
+
+      /* ════════════════════════════════
+   HELPERS
+════════════════════════════════ */
+      const getLv = (id) => LEVELS.find((l) => l.id === id) || LEVELS[0];
+      const childrenOf = {};
+      const parentsOf = {};
+      const nodeProgColor = {};
+      const collapsed = new Set();
+
+      function buildMaps() {
+        EDGES.forEach((e) => {
+          if (e.type !== "vertical") return;
+          if (!childrenOf[e.from]) childrenOf[e.from] = [];
+          childrenOf[e.from].push(e.to);
+          if (!parentsOf[e.to]) parentsOf[e.to] = [];
+          parentsOf[e.to].push(e.from);
+        });
+        Object.keys(PROG_COLORS).forEach((pid) => {
+          const col = PROG_COLORS[pid];
+          nodeProgColor[pid] = col;
+          const q = [...(childrenOf[pid] || [])],
+            vis = new Set([pid]);
+          while (q.length) {
+            const c = q.shift();
+            if (vis.has(c)) continue;
+            vis.add(c);
+            if (!nodeProgColor[c]) nodeProgColor[c] = col;
+            (childrenOf[c] || []).forEach((x) => {
+              if (!vis.has(x)) q.push(x);
+            });
+          }
+        });
+      }
+
+      function getConnColor(fromId, toId, type) {
+        if (type === "horizontal") return "#E09530";
+        const fl = (NODES[fromId] || {}).level || 0;
+        if (fl >= 5)
+          return nodeProgColor[toId] || nodeProgColor[fromId] || "#94afc4";
+        return getLv(fl).lineColor || "#94afc4";
+      }
+
+      /* ════════════════════════════════
+   LEGEND
+════════════════════════════════ */
+      function buildLegend() {
+        const bar = document.getElementById("legendBar");
+        const sep = bar.querySelector(".l-sep");
+        [...LEVELS].reverse().forEach((lv) => {
+          const d = document.createElement("div");
+          d.className = "l-item";
+          d.innerHTML = `<div class="l-dot" style="background:${lv.cardBorder}"></div><span>${lv.name}</span>`;
+          bar.insertBefore(d, sep);
+        });
+      }
+
+      /* ════════════════════════════════
+   BUILD CARD (helper)
+════════════════════════════════ */
+      function buildCard(nid, n, lv, withToggle) {
+        const card = document.createElement("div");
+        card.className = "node-card" + (lv.darkCard ? " dark-card" : "");
+        if (nid === "misi-all" || nid === "is-all")
+          card.classList.add("wide-card");
+        card.dataset.id = nid;
+        card.style.cssText = `border-top-color:${lv.cardBorder};--accent:${lv.accent};${lv.darkCard ? "background:" + lv.cardBg + ";" : ""}`;
+        const items = (n.indikator || [])
+          .map((i) => `<li>${i.nama}</li>`)
+          .join("");
+        const childCount = withToggle ? (SK_CHILDREN[nid] || []).length : 0;
+        card.innerHTML = `
+    <div class="n-level" style="color:${lv.accent}">${lv.name}</div>
+    <div class="n-nama">${n.nama}</div>
+    ${items ? `<div class="n-it">Indikator</div><ul class="n-il" style="--bullet:${lv.accent}">${items}</ul>` : ""}
+    <button class="btn-d" style="border-color:${lv.accent};color:${lv.accent}" onclick="event.stopPropagation();openModal('${nid}')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      Lihat Detail
+    </button>
+    ${
+      withToggle && childCount
+        ? `<button class="toggle-btn" data-node="${nid}" style="border-color:${lv.accent};color:${lv.accent}" onclick="event.stopPropagation();toggleCollapse('${nid}')">
+      <span class="t-icon">▼</span><span class="t-lbl">${childCount} sub kegiatan</span>
+    </button>`
+        : ""
+    }`;
+        card.addEventListener("click", () => openModal(nid));
+        card.addEventListener("mouseenter", () => highlightChain(nid));
+        card.addEventListener("mouseleave", resetHighlight);
+        return card;
+      }
+
+      /* ════════════════════════════════
+   BUILD TREE
+════════════════════════════════ */
+      function buildTree() {
+        const wrap = document.getElementById("treeWrapper");
+        // Levels 0–6
+        LAYOUT.forEach((row, ri) => {
+          const lv = getLv(row.level);
+          const rowEl = document.createElement("div");
+          rowEl.className = "tree-row";
+          rowEl.dataset.rowLevel = row.level;
+          row.nodes.forEach((nid) => {
+            const n = NODES[nid];
+            if (!n) return;
+            const withToggle = row.level === 6; // only sk-* get toggle
+            rowEl.appendChild(buildCard(nid, n, lv, withToggle));
+          });
+          wrap.appendChild(rowEl);
+          if (ri < LAYOUT.length - 1) {
+            const g = document.createElement("div");
+            g.className = "v-gap";
+            wrap.appendChild(g);
+          }
+        });
+
+        // Level 7 — vertical groups
+        const gapSk = document.createElement("div");
+        gapSk.className = "v-gap-sk";
+        gapSk.id = "gapBeforeSsk";
+        wrap.appendChild(gapSk);
+
+        const groupsRow = document.createElement("div");
+        groupsRow.className = "level7-groups";
+        groupsRow.id = "sskGroupsRow";
+
+        const lv7 = getLv(7);
+        LAYOUT[LAYOUT.length - 1].nodes.forEach((skId) => {
+          const grp = document.createElement("div");
+          grp.className = "ssk-group";
+          grp.dataset.parent = skId;
+          (SK_CHILDREN[skId] || []).forEach((sskId) => {
+            const n = NODES[sskId];
+            if (!n) return;
+            grp.appendChild(buildCard(sskId, n, lv7, false));
+          });
+          groupsRow.appendChild(grp);
+        });
+        wrap.appendChild(groupsRow);
+      }
+
+      /* ════════════════════════════════
+   CONNECTORS
+════════════════════════════════ */
+      function isCardVisible(el) {
+        if (!el) return false;
+        if (el.style.display === "none") return false;
+        let p = el.parentElement;
+        while (p) {
+          if (p.style.display === "none") return false;
+          // grp-hidden collapses height but card is still "visible" logically — skip connector
+          if (p.classList && p.classList.contains("grp-hidden")) return false;
+          p = p.parentElement;
+        }
+        return true;
+      }
+
+      function drawConnectors() {
+        const svg = document.getElementById("connectorSvg");
+        const wrap = document.getElementById("treeWrapper");
+        const wR = wrap.getBoundingClientRect();
+        svg.innerHTML = "";
+        const cm = {};
+        wrap.querySelectorAll("[data-id]").forEach((el) => {
+          cm[el.dataset.id] = el;
+        });
+
+        EDGES.forEach((e) => {
+          const a = cm[e.from],
+            b = cm[e.to];
+          if (!a || !b) return;
+          if (!isCardVisible(a) || !isCardVisible(b)) return;
+          const aR = a.getBoundingClientRect(),
+            bR = b.getBoundingClientRect();
+          if (!aR.width || !bR.width) return;
+          const ox = wR.left,
+            oy = wR.top;
+          const p = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "path",
+          );
+          p.setAttribute("fill", "none");
+          p.setAttribute("stroke-linecap", "round");
+          p.dataset.from = e.from;
+          p.dataset.to = e.to;
+          const col = getConnColor(e.from, e.to, e.type);
+          p.setAttribute("stroke", col);
+          if (e.type === "vertical") {
+            const x1 = aR.left + aR.width / 2 - ox,
+              y1 = aR.bottom - oy;
+            const x2 = bR.left + bR.width / 2 - ox,
+              y2 = bR.top - oy;
+            // For sk→ssk connections (almost same x), use a gentle curve
+            const dx = Math.abs(x2 - x1);
+            const my = dx < 10 ? (y1 + y2) / 2 : (y1 + y2) / 2;
+            p.setAttribute(
+              "d",
+              `M${x1},${y1} C${x1},${my} ${x2},${my} ${x2},${y2}`,
+            );
+            p.setAttribute("stroke-width", "1.6");
+            p.setAttribute("stroke-dasharray", "5 3");
+          } else {
+            const L = aR.left < bR.left ? aR : bR,
+              R = aR.left < bR.left ? bR : aR;
+            const x1 = L.right - ox,
+              x2 = R.left - ox;
+            const y1 = L.top + L.height / 2 - oy,
+              y2 = R.top + R.height / 2 - oy;
+            const mx = (x1 + x2) / 2,
+              arcH = Math.max(22, (x2 - x1) * 0.18);
+            p.setAttribute(
+              "d",
+              `M${x1},${y1} Q${mx},${Math.min(y1, y2) - arcH} ${x2},${y2}`,
+            );
+            p.setAttribute("stroke-width", "2");
+          }
+          svg.appendChild(p);
+        });
+      }
+
+      /* ════════════════════════════════
+   COLLAPSE / EXPAND
+════════════════════════════════ */
+      function updateVisibility() {
+        const wrap = document.getElementById("treeWrapper");
+        const lv7Row = document.getElementById("sskGroupsRow");
+        const gapSk = document.getElementById("gapBeforeSsk");
+        let anyGroupVisible = false;
+
+        lv7Row.querySelectorAll(".ssk-group").forEach((grp) => {
+          const skId = grp.dataset.parent;
+          const isCollapsed = collapsed.has(skId);
+          // Show/hide ssk cards within group
+          grp
+            .querySelectorAll("[data-id]")
+            .forEach((c) => (c.style.display = isCollapsed ? "none" : ""));
+          // After hiding all children, group height auto = 0 (flex-col with all hidden children)
+          // Mark group open/closed for visibility checks
+          grp.dataset.collapsed = isCollapsed ? "1" : "0";
+          if (!isCollapsed) anyGroupVisible = true;
+        });
+
+        // Show/hide the whole groups row + gap
+        gapSk.style.display = anyGroupVisible ? "" : "none";
+        lv7Row.style.display = anyGroupVisible ? "" : "none";
+
+        // Update toggle buttons
+        wrap.querySelectorAll(".toggle-btn[data-node]").forEach((btn) => {
+          const nid = btn.dataset.node;
+          const isCol = collapsed.has(nid);
+          btn.classList.toggle("collapsed", isCol);
+          const lbl = btn.querySelector(".t-lbl");
+          if (lbl) {
+            const count = (SK_CHILDREN[nid] || []).length;
+            lbl.textContent = isCol
+              ? `${count} tersembunyi`
+              : `${count} sub kegiatan`;
+          }
+        });
+        setTimeout(drawConnectors, 80);
+      }
+
+      function toggleCollapse(nid) {
+        if (collapsed.has(nid)) collapsed.delete(nid);
+        else collapsed.add(nid);
+        updateVisibility();
+      }
+      function expandAll() {
+        collapsed.clear();
+        updateVisibility();
+      }
+      function collapseAll() {
+        collapsed.clear();
+        Object.keys(SK_CHILDREN).forEach((id) => collapsed.add(id));
+        updateVisibility();
+      }
+
+      /* ════════════════════════════════
+   HIGHLIGHT ON HOVER
+════════════════════════════════ */
+      function getAncestorChain(nid) {
+        const chain = new Set([nid]);
+        const q = [nid];
+        while (q.length) {
+          const cur = q.shift();
+          (parentsOf[cur] || []).forEach((p) => {
+            if (!chain.has(p)) {
+              chain.add(p);
+              q.push(p);
+            }
+          });
+        }
+        return chain;
+      }
+      function highlightChain(nid) {
+        const chain = getAncestorChain(nid);
+        document.getElementById("treeWrapper").classList.add("is-dimming");
+        document.querySelectorAll("[data-id]").forEach((card) => {
+          if (!isCardVisible(card)) return;
+          card.classList.toggle("highlighted", chain.has(card.dataset.id));
+          card.classList.toggle("dimmed", !chain.has(card.dataset.id));
+        });
+        document.querySelectorAll("#connectorSvg path").forEach((p) => {
+          const inChain = chain.has(p.dataset.from) && chain.has(p.dataset.to);
+          p.classList.toggle("path-hi", inChain);
+          p.classList.toggle("path-dim", !inChain);
+        });
+      }
+      function resetHighlight() {
+        document.getElementById("treeWrapper").classList.remove("is-dimming");
+        document
+          .querySelectorAll("[data-id]")
+          .forEach((c) => c.classList.remove("highlighted", "dimmed"));
+        document
+          .querySelectorAll("#connectorSvg path")
+          .forEach((p) => p.classList.remove("path-hi", "path-dim"));
+      }
+
+      /* ════════════════════════════════
+   CENTER SCROLL TO ROOT
+════════════════════════════════ */
+      function centerRoot() {
+        requestAnimationFrame(() => {
+          const scroll = document.getElementById("treeScroll");
+          const root = document.querySelector('[data-id="misi-all"]');
+          if (!root || !scroll) return;
+          const cardCenter = root.offsetLeft + root.offsetWidth / 2;
+          scroll.scrollLeft = Math.max(0, cardCenter - scroll.clientWidth / 2);
+        });
+      }
+
+      /* ════════════════════════════════
+   MODAL
+════════════════════════════════ */
+      function openModal(id) {
+        const n = NODES[id];
+        if (!n) return;
+        const lv = getLv(n.level);
+        const badge = document.getElementById("modalBadge");
+        badge.textContent = lv.name;
+        badge.style.cssText = `background:${lv.badgeBg};color:${lv.badgeColor}`;
+        document.getElementById("modalNama").textContent = n.nama;
+        document.getElementById("modalBody").innerHTML = buildModalBody(n);
+        document.getElementById("modalOverlay").classList.add("open");
+        document.body.style.overflow = "hidden";
+      }
+      function buildModalBody(n) {
+        const info = `<div class="m-sec">Informasi</div>
+    <div class="info-row">
+      <div class="info-cell"><div class="ic-l">Periode</div><div class="ic-v">${n.periode || "—"}</div></div>
+      <div class="info-cell"><div class="ic-l">Pelaksana</div><div class="ic-v" style="font-size:12px">${n.pelaksana || "—"}</div></div>
+    </div>`;
+        let ind = "";
+        if (n.indikator?.length) {
+          const rows = n.indikator
+            .map(
+              (i) =>
+                `<tr><td>${i.nama}</td><td style="text-align:right">${i.satuan ? `<span class="s-badge">${i.satuan}</span>` : "-"}</td></tr>`,
+            )
+            .join("");
+          ind = `<div class="m-sec">Indikator Kinerja</div><table class="m-table"><thead><tr><th>Indikator</th><th style="text-align:right">Satuan</th></tr></thead><tbody>${rows}</tbody></table>`;
+        }
+        const ket = n.keterangan
+          ? `<div class="m-sec">Keterangan</div><p style="font-size:12px;line-height:1.65;color:#445;margin-bottom:14px">${n.keterangan}</p>`
+          : "";
+        const bp = n.berbagi_peran || {};
+        const mkL = (arr) =>
+          arr?.length
+            ? `<ul class="pl">${arr.map((x) => `<li>${x}</li>`).join("")}</ul>`
+            : `<ul class="pl empty"><li>—</li></ul>`;
+        const peran = `<div class="m-sec">Berbagi Peran (Crosscutting)</div>
+    <div class="peran-grid">
+      <div class="peran-block"><div class="pt int">🏢 Internal</div>${mkL(bp.internal)}</div>
+      <div class="peran-block"><div class="pt lin">🔗 Lintas Sektor</div>${mkL(bp.lintas_sektor)}</div>
+      <div class="peran-block"><div class="pt ext">🌐 Eksternal</div>${mkL(bp.eksternal)}</div>
+    </div>`;
+        return info + ind + ket + peran;
+      }
+      function closeModal() {
+        document.getElementById("modalOverlay").classList.remove("open");
+        document.body.style.overflow = "";
+      }
+      function closeOnOverlay(e) {
+        if (e.target === document.getElementById("modalOverlay")) closeModal();
+      }
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeModal();
+      });
+
+      /* ════════════════════════════════
+   TOAST
+════════════════════════════════ */
+      function showToast(msg, dur = 3000) {
+        const t = document.getElementById("toast");
+        t.textContent = msg;
+        t.classList.add("show");
+        setTimeout(() => t.classList.remove("show"), dur);
+      }
+
+      /* ════════════════════════════════
+   PDF EXPORT via html2canvas + jsPDF
+════════════════════════════════ */
+      async function exportPDF(allLevels) {
+        if (!window.html2canvas || !window.jspdf) {
+          showToast("⚠️ Library PDF belum dimuat, coba reload halaman.");
+          return;
+        }
+        const overlay = document.getElementById("pdfOverlay");
+        const status = document.getElementById("pdfStatus");
+        const btnA = document.getElementById("btnPdfAll");
+        const btnK = document.getElementById("btnPdfKegiatan");
+        btnA.disabled = btnK.disabled = true;
+
+        // Save current state
+        const prevCollapsed = new Set(collapsed);
+        overlay.classList.add("show");
+
+        try {
+          // Set state for capture
+          status.textContent = "Mempersiapkan tampilan…";
+          if (allLevels) {
+            expandAll();
+          } else {
+            collapseAll();
+          }
+          await new Promise((r) => setTimeout(r, 250));
+          drawConnectors();
+          await new Promise((r) => setTimeout(r, 250));
+
+          status.textContent = "Merender pohon kinerja…";
+          const wrap = document.getElementById("treeWrapper");
+          // Temporarily remove scroll clipping
+          const scroll = document.getElementById("treeScroll");
+          const prevOvf = scroll.style.overflow;
+          scroll.style.overflow = "visible";
+
+          const canvas = await html2canvas(wrap, {
+            scale: 1.8,
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: "#eef2f7",
+            scrollX: -scroll.scrollLeft,
+            scrollY: -window.scrollY,
+            width: wrap.scrollWidth,
+            height: wrap.scrollHeight,
+            windowWidth: wrap.scrollWidth,
+            windowHeight: wrap.scrollHeight,
+            logging: false,
+            onclone: (clonedDoc) => {
+              // Hide header buttons in clone
+              const hr = clonedDoc.getElementById("headerRight");
+              if (hr) hr.style.display = "none";
+            },
+          });
+          scroll.style.overflow = prevOvf;
+
+          status.textContent = "Membuat file PDF…";
+          const imgData = canvas.toDataURL("image/jpeg", 0.92);
+          const { jsPDF } = window.jspdf;
+          // Canvas is at scale 1.8 → divide by 1.8 for CSS px, then convert to mm
+          const cssW = canvas.width / 1.8;
+          const cssH = canvas.height / 1.8;
+          const mmW = Math.round((cssW * 25.4) / 96);
+          const mmH = Math.round((cssH * 25.4) / 96);
+          const orient = mmW > mmH ? "l" : "p";
+          const pdf = new jsPDF({
+            orientation: orient,
+            unit: "mm",
+            format: [mmW, mmH],
+            compress: true,
+          });
+          pdf.addImage(imgData, "JPEG", 0, 0, mmW, mmH, undefined, "FAST");
+          const fname = allLevels
+            ? "Pohon-Kinerja-Disbudpar-2025-2029-Semua-Level.pdf"
+            : "Pohon-Kinerja-Disbudpar-2025-2029-sd-Kegiatan.pdf";
+          pdf.save(fname);
+          showToast("✅ PDF berhasil diunduh!");
+        } catch (err) {
+          console.error(err);
+          showToast("❌ Gagal membuat PDF: " + err.message);
+        } finally {
+          overlay.classList.remove("show");
+          btnA.disabled = btnK.disabled = false;
+          // Restore previous state
+          collapsed.clear();
+          prevCollapsed.forEach((id) => collapsed.add(id));
+          updateVisibility();
+          centerRoot();
+        }
+      }
+
+      /* ════════════════════════════════
+   INIT
+════════════════════════════════ */
+      buildMaps();
+      buildLegend();
+      buildTree();
+      // Default: all sk-* collapsed → show up to level Kegiatan
+      collapseAll();
+      window.addEventListener("load", () => {
+        setTimeout(() => {
+          drawConnectors();
+          centerRoot();
+        }, 120);
+      });
+      window.addEventListener("resize", () => {
+        clearTimeout(window._rct);
+        window._rct = setTimeout(() => {
+          drawConnectors();
+        }, 150);
+      });
+    </script>
+  </body>
+</html>
